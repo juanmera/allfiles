@@ -1,0 +1,12 @@
+{
+  "file": "./ALL_FILES",
+  "url": "http://<URL>.onion/<PrefixPath>",
+  "proxy": "socks5://127.0.0.1:9050",
+  "exclude_types": [
+    "binary",
+    "font"
+  ],
+  "exclude_paths": [
+  ],
+  "warn_as_error_limit": 1
+}
