@@ -81,7 +81,6 @@ func (dl *DownloadCmd) Run(ctx *Context) error {
 		fileURL := dl.URL.JoinPath(v.FilePath()).String()
 		localPath := filepath.Join(dl.OutputDir, v.FilePath())
 		dp.Send(downloader.NewFile(fileURL, localPath))
-		break
 	}
 	return nil
 }

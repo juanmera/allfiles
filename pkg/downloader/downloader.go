@@ -86,39 +86,42 @@ func (fd File) Download(client *http.Client) error {
 	}
 	if err == nil {
 		err = os.Rename(incompleteLocalPath, fd.LocalPath)
+		if err != nil {
+			slog.Debug("Downloaded", "local_path", fd.LocalPath)
+		}
 	}
 	return err
 }
 
-type DownloaderOptions struct {
+type Options struct {
 	ProxyURL         string
 	Timeout          int
 	Threads          int
 	WarnAsErrorLimit int
 }
 
-type OptionFunc func(*DownloaderOptions)
+type OptionFunc func(*Options)
 
 func WithProxy(proxyURL string) OptionFunc {
-	return func(o *DownloaderOptions) {
+	return func(o *Options) {
 		o.ProxyURL = proxyURL
 	}
 }
 
 func WithTimeout(timeout int) OptionFunc {
-	return func(o *DownloaderOptions) {
+	return func(o *Options) {
 		o.Timeout = timeout
 	}
 }
 
 func WithThreads(threads int) OptionFunc {
-	return func(o *DownloaderOptions) {
+	return func(o *Options) {
 		o.Threads = threads
 	}
 }
 
 func WithWarnAsErrorLimit(limit int) OptionFunc {
-	return func(o *DownloaderOptions) {
+	return func(o *Options) {
 		o.WarnAsErrorLimit = limit
 	}
 
@@ -133,7 +136,7 @@ type Downloader struct {
 }
 
 func New(options ...OptionFunc) *Downloader {
-	do := &DownloaderOptions{}
+	do := &Options{}
 	for _, fo := range options {
 		fo(do)
 	}
@@ -146,7 +149,7 @@ func New(options ...OptionFunc) *Downloader {
 	}
 }
 
-func createHttpClient(options *DownloaderOptions) *http.Client {
+func createHttpClient(options *Options) *http.Client {
 	client := &http.Client{}
 	if options.ProxyURL != "" {
 		proxyURL, _ := url.Parse(options.ProxyURL)
