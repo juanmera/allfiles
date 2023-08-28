@@ -8,5 +8,5 @@
   ],
   "exclude_paths": [
   ],
-  "warn_as_error_limit": 1
+  "warn_as_error_limit": 0
 }

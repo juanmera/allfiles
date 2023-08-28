@@ -86,7 +86,7 @@ func (fd File) Download(client *http.Client) error {
 	}
 	if err == nil {
 		err = os.Rename(incompleteLocalPath, fd.LocalPath)
-		if err != nil {
+		if err == nil {
 			slog.Debug("Downloaded", "local_path", fd.LocalPath)
 		}
 	}
