@@ -8,6 +8,10 @@ import (
 )
 
 func ToBytes(humanSize string) int {
+	if humanSize == "" {
+		return 0
+	}
+	humanSize = strings.ToUpper(humanSize)
 	var multiplier float64 = 1
 	if strings.HasSuffix(humanSize, "K") {
 		humanSize = strings.TrimSuffix(humanSize, "K")

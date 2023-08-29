@@ -25,12 +25,18 @@ func (aff *File) Ext() string {
 	return strings.ToLower(filepath.Ext(aff.Name))
 }
 
+func (aff *File) HumanSize() string {
+	return humanize.FromBytes(aff.Size)
+}
+
 type Parser struct {
 	FilePath     string
 	includeExts  []string
 	excludeExts  []string
 	includePaths []string
 	excludePaths []string
+	MinSize      int
+	MaxSize      int
 }
 
 func NewAllFiles(filePath string) *Parser {
@@ -102,7 +108,10 @@ func (afp *Parser) Start() (chan *File, error) {
 					continue
 				}
 				file := afp.parseLine(relativePath, line)
-				if file.Size == 0 {
+				if file.Size < afp.MinSize {
+					continue
+				}
+				if afp.MaxSize != 0 && file.Size > afp.MaxSize {
 					continue
 				}
 				if !afp.validateExt(file.Ext()) {
@@ -154,4 +163,12 @@ func (afp *Parser) parseLine(path, line string) *File {
 		Name: parts[2],
 		Size: humanize.ToBytes(parts[1]),
 	}
+}
+
+func (afp *Parser) SetMinSize(size string) {
+	afp.MinSize = humanize.ToBytes(size)
+}
+
+func (afp *Parser) SetMaxSize(size string) {
+	afp.MaxSize = humanize.ToBytes(size)
 }

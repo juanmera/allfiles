@@ -18,6 +18,9 @@ type Context struct {
 }
 type LsCmd struct {
 	ShowTotalSize bool     `name:"totals" short:"t" help:"Show total size"`
+	ShowSize      bool     `name:"size" short:"s" help:"Show individual file size"`
+	MinSize       string   `default:"1" help:"Min file size (0 includes empty files)"`
+	MaxSize       string   `help:"Max file size (0 is unlimited)"`
 	IncludeExts   []string `name:"exts" short:"e" help:"Include extesions"`
 	ExcludeExts   []string `name:"exclude-exts" short:"x" help:"Exclude extesions"`
 	IncludePaths  []string `name:"paths" short:"p" help:"Include paths"`
@@ -33,7 +36,11 @@ func (ls *LsCmd) Run(ctx *Context) error {
 	}
 	totalSize := 0
 	for v := range ch {
-		fmt.Printf("%s\n", v.FilePath())
+		if ls.ShowSize {
+			fmt.Printf("%s %s\n", v.HumanSize(), v.FilePath())
+		} else {
+			fmt.Printf("%s\n", v.FilePath())
+		}
 		totalSize += v.Size
 	}
 	if ls.ShowTotalSize {
@@ -44,6 +51,8 @@ func (ls *LsCmd) Run(ctx *Context) error {
 
 func (ls *LsCmd) StartFilter(file string) (chan *allfiles.File, error) {
 	afp := allfiles.NewAllFiles(file)
+	afp.SetMinSize(ls.MinSize)
+	afp.SetMaxSize(ls.MaxSize)
 	afp.ExcludeExts(ls.ExcludeExts...)
 	afp.IncludeExts(ls.IncludeExts...)
 	afp.ExcludeTypes(ls.ExcludeTypes...)
