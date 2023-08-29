@@ -64,12 +64,12 @@ func (ls *LsCmd) StartFilter(file string) (chan *allfiles.File, error) {
 
 type DownloadCmd struct {
 	LsCmd
-	URL              url.URL `short:"u" required:""`
-	OutputDir        string  `default:"./data"`
-	ProxyURL         url.URL `name:"proxy"`
-	Timeout          int
-	Threads          int
-	WarnAsErrorLimit int `default:"1" short:"w"`
+	URL              url.URL `short:"u" required:"" help:"URL, including path prefixes, where to download the files"`
+	OutputDir        string  `default:"./data" help:"Directory where to save files"`
+	ProxyURL         url.URL `name:"proxy" help:"Proxy server (can be used for Tor)"`
+	Timeout          int     `help:"Total connection timeout"`
+	Threads          int     `help:"Simultaneous connections"`
+	WarnAsErrorLimit int     `default:"1" short:"w" help:"Trigger error for this many continuous warnings"`
 }
 
 func (dl *DownloadCmd) Run(ctx *Context) error {
